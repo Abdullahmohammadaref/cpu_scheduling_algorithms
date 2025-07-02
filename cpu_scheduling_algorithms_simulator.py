@@ -46,6 +46,8 @@ class CpuScheduler:
         self.waiting_queue = {} # waiting queue
         # the scheduling algorithm
         self.scheduling_algorithm = scheduling_algorithm
+        # store all the times it took for each procces to be fully completed
+        self.completion_times = []
 
         # some colors and a reset value for better looking terminal
         self.RESET = "\033[0m" # reset colors
@@ -64,6 +66,15 @@ class CpuScheduler:
         Thread(target=self.timer).start()
         # start a thread that will print the status of processes and manage them every second
         Thread(target=self.main).start()
+
+    def print_current_average_completion_time(self):
+        """
+        prints the average completion times of processes when the function is called
+        """
+        sum = 0
+        for time in self.completion_times:
+            sum += time
+        print(f"average completion time{sum / len(self.completion_times)}")
 
     def timer(self):
         """
@@ -126,7 +137,9 @@ class CpuScheduler:
                     """
                     self.current_process.remaining_time -= 1
                     if self.current_process.remaining_time == 0:
-                        print(f"\n{self.GREEN}{self.current_process} has been completed after {self.current_second - self.current_process.arrival_time} seconds.{self.RESET}", end='')
+                        time_to_completion = self.current_second - self.current_process.arrival_time
+                        self.completion_times.append(time_to_completion)
+                        print(f"\n{self.GREEN}{self.current_process} has been completed after {time_to_completion} seconds.{self.RESET}", end='')
                         self.current_process = None
 
                 if self.current_process:
@@ -246,6 +259,10 @@ class Ui:
 
         # button to pause and resume timer
         start_pause_cpu_scheduler_timer = Button(self.ui, text="Start/pause scheduling timer", command=lambda: (self.cpu_scheduler.start_pause_cpu_scheduler_timer()))
+        start_pause_cpu_scheduler_timer.pack()
+        # button to print the current process completion average time
+        start_pause_cpu_scheduler_timer = Button(self.ui, text="Print current process completion average time",
+                                                 command=lambda: (self.cpu_scheduler.print_current_average_completion_time()))
         start_pause_cpu_scheduler_timer.pack()
 
     def check_and_submit(self, process_id, arrival_time, burst_time, priority, start_waiting_time, end_waiting_time):
