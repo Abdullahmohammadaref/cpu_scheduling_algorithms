@@ -126,7 +126,7 @@ class CpuScheduler:
                     """
                     self.current_process.remaining_time -= 1
                     if self.current_process.remaining_time == 0:
-                        print(f"\n{self.GREEN}{self.current_process} has been completed.{self.RESET}", end='')
+                        print(f"\n{self.GREEN}{self.current_process} has been completed after {self.current_second - self.current_process.arrival_time} seconds.{self.RESET}", end='')
                         self.current_process = None
 
                 if self.current_process:
@@ -352,7 +352,7 @@ if __name__=="__main__":
     # SRTF(shortest job first(preemptive))
     # PJF(priority job first)
     # PJF_P(priority job first(preemptive))
-    scheduling_algorithm = "FCFS"
+    scheduling_algorithm = "PJF_P"
 
     print(scheduling_algorithm)
 
