@@ -1,0 +1,132 @@
+\documentclass{article}
+\usepackage{graphicx} 
+\usepackage[hidelinks]{hyperref}
+
+\title{\fontsize{19}{10}\textbf{CPU scheduling algorithms simulator – A project report}}
+
+\author{\textbf{Abdullah Mohammad Aref}}
+\date{\textbf{July 2025}}
+
+\begin{document}
+
+\maketitle
+
+\begin{flushleft}
+    
+    \textbf{Demonstration video:}
+    \url{https://youtu.be/gttFN7C-AtU}
+
+    
+    \textbf{Project Repository:}
+    \url{https://github.com/Abdullahmohammadaref/cpu_scheduling_algorithms}
+    
+    
+\end{flushleft}
+
+\tableofcontents
+
+\section{Introduction}
+
+This CPU Scheduling algorithms simulator project aims to clearly showcase how modern operating systems can appear to be running multiple tasks at a time on one CPU. While in reality, the operating system only allows one process to use the CPU at a time by switching quickly and efficiently between processes in a process called CPU scheduling. This simulator demonstrates how different CPU scheduling algorithms allocate different processes to the CPU depending on the properties of the process.
+
+\section{System design}
+
+Before running the simulator, the user should go to the bottom of the program and input one of the available scheduling algorithms:
+\begin{itemize}
+    \item FCFS(first come first server) 
+    \item SJF(shortest job first (non preemptive))
+    \item SRTF(shortest remaining time first (preemptive)) 
+    \item PJF(priority job first (non preemptive))
+    \item PJF\_P(priority job first (preemptive)
+\end{itemize}
+
+When running the simulator, a GUI window will appear. The user can
+create a new process by entering the process properties in the  following fields:
+
+\begin{itemize}
+    \item Process arrival time
+    \item Process burst time
+    \item Process priority
+    \item After how many seconds of running will the process ask for an input?
+    \item After how many seconds of waiting for an input will the process go back to the ready queue?
+\end{itemize}
+
+Moreover, at the bottom, the user can click the "start/pause scheduling timer" button to start and stop the timer at any time for simulation purposes. When creating one or multiple processes, the user can start the timer and look at the terminal to see the current process properties and what happens to these processes in real time for each second that passes. Finally, the user can also click the last button to print the current average completion time of functions.
+
+\section{Implementation}
+
+Three types of queues are being used to store processes according to their current state:
+
+\begin{itemize}
+    \item Job queue: Processes are first added to this queue
+    \item Ready queue: Processes are removed from the Job queue and added here for the first time when their arrival time comes. Processes are also added when they are preempted from the CPU or when they leave the waiting queue.
+    \item waiting queue: a process is added to this queue when it is running on the CPU, and it voluntarily gives up the CPU to wait for an input so that it can proceed back to running.
+\end{itemize}
+
+When the user first creates a process, the process is stored in the Job queue. While the timer is running, the program checks if the arrival time is equal to the current time; then the process leaves the Job queue and moves to the Ready queue. These processes are sorted according to the selected scheduling algorithm.
+\begin{itemize}
+    \item first come first server: Processes are ordered by arrival time in ascending order
+    \item shortest job first and shortest remaining time first: processes are ordered by remaining time in ascending order 
+    \item priority job first preemptive and none-preemptive: processes are ordered by higher priority in ascending order
+\end{itemize}
+After that, if no process is taking over the CPU, then the first process in the ready queue will leave the queue and take over the CPU. If the scheduling algorithm (like first come first serve) is non-preemptive, then the process will stay in the CPU for the whole duration of its burst time. In the shortest Job first algorithm, the current process in the CPU cannot be preempted even if a process with a shorter remaining time is waiting in the ready queue. The same idea applies to the priority job first algorithm. A process in the ready queue with a higher priority than the current Process in the CPU cannot kick that process from the CPU 
+
+On the other hand if the scheduling algorithm preemptive the current running process can anytime be kicked out from the CPU by an another process. In the shortest remaining time first algorithm, if there is a process in the ready queue with a shorter remaining time than the currently running process, then that process will forcibly leave the CPU and get replaced by that process in the ready queue. Also in the preemptive priority first algorithm, a process is removed from the CPU if there is another ready process with a higher priority.
+
+A process can leave the CPU by itself while still having some remaining time for the purpose of waiting for an input, Then it goes back to the ready queue. This is also the only way a non-preemptive process can give up the CPU voluntarily before it is done fully executing.
+
+
+\section{Challenges and solutions}
+
+During the development of this project, there were multiple issues that occurred and had to be solved. One of them is that the main function keeps running even when the timer is off. This occurred because there was no condition to tell the main thread to pause the loop until the timer changes. This has caused unexpected actions like processes running for no reason, even when the timer is off. To solve this issue, a previous\_second variable is added on top of the additional second variable, then the loop checks if they are similar or not. If these variables are different, then the loop can proceed. 
+
+Furthermore, solving this problem has raised another problem, which completely skipped over the first second. This means that processes with an arrival time of 0 have been abandoned. This used to happen because the first initiated current\_second and previous\_second variables was set to 0. So when the timer starts, the loop doesn't work until the timer changes the current time from zero to 1, and when the timer changes to one, the loop runs as if the current time is 1. So the loop never runs once when the current time is zero. To fix this, the current\_second and previous\_second variables was initially set to -1. Also, to prevent the timer from waiting one second to go from -1 to 0, a condition was added to the timer that only allows the timer to wait for 1 second if the current\_second is different from -1.  
+
+Finally, sometimes processes used to be added to the CPU even when the CPU is taken by another process, causing a lot of problems. This happened because the code was not checking if there was a currently running process in the CPU, causing the code to proceed and add another process. This causes inaccurate CPU scheduling simulation, because a real CPU can only run one process at a time, and real operating systems make sure to schedule processes on this CPU one at a time. To fix this issue, a condition that checks if there is a process in the CPU was added to several parts of the code to prevent this issue from occurring.
+
+\section{Results}
+
+This CPU scheduling simulator was made to create a visual environment for the user where he can learn how CPU scheduling algorithms work in real systems. The result was a simulator that:
+
+\begin{itemize}
+    \item Allow the user to enter a process and its properties, which can be: arrival time, burst time, priority, remaining time, start waiting time, and end waiting time.
+    \item Have a simple GUI design along with a colored terminal and the ability to start and stop the timer to make the simulation more interactive to the users.
+    \item Display the total time the process took from start time to the moment it is completed, so the user can compare different algorithms and their effect on processes. Also, allow the user to see the average process completion times for all currently completed processes.
+    \item Supports the following CPU scheduling algorithms: First come first serve, shortest job first (non-preemptive), shortest remaining time first (preemptive), priority job first (non-preemptive), and priority job first (preemptive).
+    \item Supports preemptive and non-preemptive algorithms by taking away the CPU from a process when the algorithm is preemptive and another process with a higher priority (either by arrival time, remaining time, or priority, depending on the algorithm used) is waiting in the ready queue. 
+    \item Simulate processes waiting for an input by removing them from the CPU and adding them to a waiting queue
+\end{itemize}
+
+As an example, this simulator was used to compare algorithms when the following processes are entered:
+
+\begin{enumerate}
+    \item process 1: arrival time: 0, burst time: 10, remaining time: 10, priority: 3, start waiting time: 3, end waiting time: 2
+    \item process 2: arrival time: 1, burst time: 4, remaining time: 4, priority: 1
+    \item process 3: arrival time: 2, burst time: 8, remaining time: 8, priority: 5, start waiting time: 4, end waiting time: 1 
+    \item process 4: arrival time: 4, burst time: 5, remaining time: 5, priority: 2
+    \item process 5: arrival time: 20, burst time: 3, remaining time: 3, priority: 4
+\end{enumerate}
+
+The following average process completion time was recorded for each algorithm:
+
+\begin{itemize}
+    \item First come first serve: 14.6 seconds
+    \item Shortest job first (non-preemptive): 13.4 seconds
+    \item Shortest arrival time first (preemptive): 12 seconds
+    \item Priority job first (non-preemptive): 13.4 seconds
+    \item Priority job first (preemptive):  12.8
+\end{itemize}
+
+For this case, it is clear that the shortest arrival time algorithm was the most efficient one. This is because the shortest arrival time algorithm focuses on completing short jobs, however this algorithm can cause starvation for longer jobs if a lot of short jobs keep coming and competing for the CPU. Also, it was clear that the first come first serve was the least efficient one. This happened because processes with high burst time are preventing those with lower burst time from finishing. It was also shown that priority job first is in the middle between these algorithms because it can increase the average completion time, as sometimes processes have to wait for a higher priority process, even if this is not the most optimal thing to do.
+
+Moreover, it is also shown that preemptive algorithms have outperformed non-preemptive algorithms, because processes are not forced to wait for a specific process if they have a higher privilege (like higher priority time or shorter remaining time).
+
+
+
+\section{Conclusion and Future Work}
+ There are some improvements that can be further done to enhance simulation experience. Firstly, adding more scheduling algorithms, like RR(Round Robin), will give the user a scheduling algorithm to simulate with. Additionally, there should be a way in the GUI to allow users to see the current running process constantly, and when the user enters a time in seconds and clicks on it, the process goes to the waiting queue. This can simulate a process requiring an input to continue, but with the ability to add the process multiple times into the waiting queue. Finally, adding a Gannet chart that compares the performance of all algorithms will allow for an easier analysis of algorithms performance
+ 
+ In conclusion, this simulator shows how each scheduling algorithm works, and it allows users to experiment with different scheduling scenarios to have a better visual understanding on how CPU scheduling works in real operating systems.
+
+
+\end{document}

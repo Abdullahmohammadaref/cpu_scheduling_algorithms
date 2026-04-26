@@ -364,7 +364,7 @@ class Ui:
 if __name__=="__main__":
     #!!!very important!!!
     # Enter one of those sorting algorithms here (case-sensitive):
-    # FCFS(first come first server)
+    # FCFS(first come first served)
     # SJF(shortest job first(non-preemptive))
     # SRTF(shortest job first(preemptive))
     # PJF(priority job first)
