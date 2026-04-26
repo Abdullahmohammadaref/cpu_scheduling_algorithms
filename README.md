@@ -11,21 +11,21 @@ process allocation, and task execution.
 - Tkinter library
 
 ## Features
-- Support for several scheduling algorithms including:
+- Support for several scheduling algorithms, including:
   - First-Come First Served
   - Shortest Job First (preemptive & nonpreemptive)
   - Priority Job First (preemptive & nonpreemptive)
 - Job, waiting, and ready queues. 
-- GUI for creating processes and controlling simulator.
-- Real-Time process allocation and task execution tracking in terminal.
-- Algorithm evaluation based on average processes completion time.
+- GUI for creating processes and controlling the simulator.
+- Real-Time process allocation and task execution tracking in the terminal.
+- Algorithm evaluation based on the average process completion time.
 
 
 ## Prerequisites
 - Python 3.12
 
 ## How to run
-1. Open terminal in directory of choice and run `git clone https://github.com/Abdullahmohammadaref/cpu_scheduling_algorithms`.
+1. Open a terminal in the directory of choice and run `git clone https://github.com/Abdullahmohammadaref/cpu_scheduling_algorithms`.
 2. Open the simulator code with an IDE and navigate to line 372 to change the `scheduling_algorithm` variable value to one of the supported algorithms:
     - `FCFS`(first-come first served)
     - `SJF`(shortest job first(non-preemptive))
