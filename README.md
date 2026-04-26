@@ -1,4 +1,4 @@
-# CPU SCHEDULING ALGORITHMS SIMULATOR
+# CPU Scheduling Algorithms Simulator
 
 Video demo: https://youtu.be/gttFN7C-AtU
 ## Overview
